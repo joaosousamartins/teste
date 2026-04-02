@@ -2,392 +2,852 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rotas Carris Metropolitana</title>
-
-<!-- Fonts e ícones -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=my_location" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=flag_2" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
-
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Alvorada Drive</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --primary-color: #007bff;
-  --primary-hover-color: #0056b3;
-  --secondary-color: #ffdd00;
-  --success-color: #28a745;
-  --success-hover-color: #218838;
-  --background-color: #f0f2f5;
-  --card-background-color: #ffffff;
-  --text-color: #333;
-  --text-light-color: #6c757d;
-  --border-color: #dee2e6;
-  --border-radius: 12px;
-  --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
-  --font-family: 'Inter', sans-serif;
-}
+:root{--bg:#090b0f;--s1:#10131a;--s2:#171b23;--s3:#1f232d;--b1:#222731;--b2:#2c313d;--acc:#f59e0b;--bl:#3b82f6;--gr:#10b981;--rd:#ef4444;--pu:#a855f7;--tx:#e2e4ee;--t2:#858b9c;--t3:#444c5c;--fn:'Syne',sans-serif;--mo:'JetBrains Mono',monospace;--r:12px;--rs:8px;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--tx);font-family:var(--fn);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(245,158,11,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.018) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
+#app{position:relative;z-index:1;}
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+.hdr{padding:15px 15px 11px;border-bottom:1px solid var(--b1);background:rgba(9,11,15,.96);backdrop-filter:blur(14px);position:sticky;top:0;z-index:200;}
+.hdr-in{max-width:620px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-ic{width:33px;height:33px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.logo-t{font-size:16px;font-weight:800;letter-spacing:-.4px;line-height:1.1;}
+.logo-s{font-size:9px;color:var(--t2);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;}
+.hdr-d{font-size:10px;color:var(--t3);font-family:var(--mo);text-align:right;line-height:1.5;}
 
-body {
-  font-family: var(--font-family);
-  background: var(--background-color);
-  color: var(--text-color);
-  padding: 20px 15px;
-  line-height: 1.6;
-}
+.tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--b1);overflow-x:auto;scrollbar-width:none;position:sticky;top:62px;z-index:199;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex:1;min-width:60px;padding:11px 4px;text-align:center;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:color .18s,border-color .18s;user-select:none;}
+.tab.on{color:var(--acc);border-bottom-color:var(--acc);}
+.ti{font-size:14px;display:block;margin-bottom:2px;}
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-}
+.ct{max-width:620px;margin:0 auto;padding:15px 13px 88px;}
+.pn{display:none;}.pn.on{display:block;}
 
-h1 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: var(--text-color);
-  font-weight: 700;
-  font-size: 2.25rem;
-}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:16px;margin-bottom:11px;}
+.ct-{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);margin-bottom:13px;display:flex;align-items:center;gap:7px;}
+.ct-::before{content:'';width:3px;height:12px;background:var(--acc);border-radius:2px;flex-shrink:0;}
 
-.search-container {
-  background: var(--card-background-color);
-  padding: 30px;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  margin-bottom: 30px;
-}
+.btn{padding:10px 14px;border-radius:var(--rs);font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .13s;letter-spacing:.3px;display:inline-flex;align-items:center;gap:5px;}
+.btn-p{background:var(--acc);color:#000;}.btn-p:hover{background:#f6a800;}
+.btn-s{background:var(--s3);color:var(--tx);border:1px solid var(--b2);}
+.btn-d{background:rgba(239,68,68,.1);color:var(--rd);border:1px solid rgba(239,68,68,.2);}
+.btn-g{background:rgba(16,185,129,.1);color:var(--gr);border:1px solid rgba(16,185,129,.2);}
+.btn-fu{width:100%;justify-content:center;padding:14px;}
 
-.search-container p {
-  text-align: center;
-  color: var(--text-light-color);
-  margin-bottom: 20px;
-}
+.inp{padding:10px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rs);color:var(--tx);font-family:var(--mo);font-size:14px;font-weight:600;outline:none;transition:border-color .15s;-webkit-appearance:none;width:100%;}
+.inp:focus{border-color:var(--acc);}
+.inp::placeholder{color:var(--t3);}
+.ir{display:flex;gap:7px;margin-bottom:9px;}.ir .inp{flex:1;}
+.ig{display:flex;flex-direction:column;gap:4px;}
+.il{font-size:9px;font-weight:700;color:var(--t2);letter-spacing:.8px;text-transform:uppercase;}
+select.inp{cursor:pointer;}
 
-.search-bar {
-  display: flex;
-  gap: 15px;
-}
+/* CALENDAR */
+.cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
+.cal-n{width:31px;height:31px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rs);color:var(--tx);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .13s;}
+.cal-n:hover{border-color:var(--acc);color:var(--acc);}
+.cal-m{font-size:15px;font-weight:800;}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cdow{text-align:center;font-size:8px;font-weight:700;color:var(--t3);padding:5px 0;text-transform:uppercase;}
+.cd{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;background:var(--s2);gap:2px;transition:all .12s;user-select:none;}
+.cd:active{transform:scale(.93);}
+.cd.em{background:transparent;cursor:default;pointer-events:none;}
+.cd.td{border-color:var(--bl);color:var(--bl);}
+.cd.sl{background:var(--acc);color:#000;font-weight:800;border-color:var(--acc);}
+.cd.hv::after{content:'';width:4px;height:4px;border-radius:50%;flex-shrink:0;}
+.cd.sl.hv::after{background:rgba(0,0,0,.4);}
+.cd.dom .dn{color:var(--rd);}
+.cd.fer .dn{color:var(--pu);}
+.cd.sab .dn{color:var(--bl);}
+.cd.fol{opacity:.5;}
+.dn{font-size:12px;font-weight:600;}
+.dic{font-size:8px;line-height:1;}
+.ev-c::after{background:var(--gr)!important;}
+.ev-f::after{background:var(--t3)!important;}
+.ev-ft::after{background:var(--acc)!important;}
+.ev-fe::after{background:var(--pu)!important;}
+.leg{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px;padding-top:9px;border-top:1px solid var(--b1);}
+.leg-item{font-size:9px;color:var(--t3);display:flex;align-items:center;gap:4px;}
+.leg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 
-#linha {
-  flex-grow: 1;
-  padding: 12px 15px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
+/* DETAIL */
+.det{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:14px;margin-top:11px;}
+.det-h{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:13px;gap:8px;flex-wrap:wrap;}
+.det-dt{font-size:13px;font-weight:700;text-transform:capitalize;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;font-size:9px;font-weight:700;}
 
-#linha:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
-}
+/* DAY TYPE CHOOSER */
+.dtc{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:11px;}
+.dt-btn{padding:9px 6px;border:1px solid var(--b2);border-radius:var(--rs);background:var(--s2);color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;text-align:center;transition:all .13s;}
+.dt-btn.on-c{border-color:var(--gr);background:rgba(16,185,129,.1);color:var(--gr);}
+.dt-btn.on-f{border-color:var(--pu);background:rgba(168,85,247,.1);color:var(--pu);}
+.dt-btn.on-ft{border-color:var(--acc);background:rgba(245,158,11,.1);color:var(--acc);}
+.dt-btn.on-n{border-color:var(--b2);background:var(--s3);color:var(--t3);}
 
-button {
-  cursor: pointer;
-  border: none;
-  border-radius: 8px;
-  background: var(--primary-color);
-  color: white;
-  padding: 12px 25px;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: background-color 0.2s ease-in-out;
-}
+/* TIMELINE */
+.tl{position:relative;padding-left:20px;margin-top:10px;}
+.tl::before{content:'';position:absolute;left:5px;top:8px;bottom:8px;width:2px;background:linear-gradient(to bottom,var(--acc),var(--bl),var(--gr));border-radius:1px;}
+.tli{position:relative;margin-bottom:11px;}
+.tld{position:absolute;left:-17px;top:7px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg);flex-shrink:0;}
+.tlt{font-family:var(--mo);font-size:10px;font-weight:700;color:var(--t2);margin-bottom:3px;}
+.tlc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rs);padding:8px 10px;}
+.tl-title{font-size:12px;font-weight:700;margin-bottom:2px;}
+.tl-det{font-size:10px;color:var(--t2);line-height:1.5;}
+.tl-obs{display:inline-block;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;margin-top:4px;background:rgba(245,158,11,.1);color:var(--acc);}
 
-button:hover {
-  background: var(--primary-hover-color);
-}
+/* BREAKDOWN */
+.br{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b1);font-size:12px;}
+.br:last-child{border-bottom:none;}
+.br-l{color:var(--t2);flex:1;padding-right:10px;line-height:1.4;}
+.br-v{font-family:var(--mo);font-weight:700;flex-shrink:0;}
 
-.line-info-card {
-    display: none;
-    background: var(--card-background-color);
-    padding: 20px;
-    border-radius: var(--border-radius);
-    margin-bottom: 20px;
-    font-size: 1.1rem;
-    font-weight: 500;
-    text-align: center;
-    border-left: 5px solid var(--primary-color);
-    box-shadow: var(--box-shadow);
-}
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px;}
+.sb{background:var(--s2);border:1px solid var(--b2);border-radius:var(--rs);padding:11px 7px;text-align:center;}
+.sn{font-size:22px;font-weight:800;font-family:var(--mo);color:var(--acc);}
+.sl-{font-size:8px;color:var(--t2);margin-top:2px;letter-spacing:.5px;text-transform:uppercase;}
 
-#patterns {
-  display: grid;
-  gap: 15px;
-  margin-bottom: 30px;
-}
+/* HERO */
+.hero{background:linear-gradient(135deg,rgba(245,158,11,.11),rgba(59,130,246,.05));border:1px solid var(--b2);border-radius:var(--r);padding:22px;text-align:center;margin-bottom:11px;}
+.hero-l{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);margin-bottom:7px;}
+.hero-v{font-size:38px;font-weight:800;font-family:var(--mo);color:var(--gr);line-height:1;}
+.hero-s{font-size:11px;color:var(--t2);margin-top:7px;}
 
-.pattern-box {
-  background: var(--card-background-color);
-  border: 1px solid var(--border-color);
-  border-left: 5px solid var(--secondary-color);
-  border-radius: 8px;
-  padding: 20px;
-  font-weight: 600;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
+/* SALARY GRID */
+.salg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:11px;}
+.salc{background:var(--s2);border:1px solid var(--b2);border-radius:var(--rs);padding:11px;}
+.salc.fu{grid-column:1/-1;}
+.sal-l{font-size:8px;color:var(--t2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;}
+.sal-v{font-size:19px;font-weight:800;font-family:var(--mo);}
 
-.pattern-box:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--box-shadow);
-}
+/* CONFIG */
+.cfr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--b1);gap:10px;}
+.cfr:last-child{border-bottom:none;}
+.cf-l{font-size:12px;font-weight:600;}
+.cf-s{font-size:9px;color:var(--t2);margin-top:2px;}
+.cf-r{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.cfi{padding:7px 9px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rs);color:var(--tx);font-family:var(--mo);font-size:12px;font-weight:700;outline:none;width:80px;text-align:right;-webkit-appearance:none;}
+.cfi:focus{border-color:var(--acc);}
+.cfu{font-size:10px;color:var(--t2);font-weight:600;white-space:nowrap;}
 
-.pattern-box span {
-    flex-grow: 1;
-}
+/* TYPE SELECTOR */
+.ts{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:11px;}
+.tb{padding:8px 3px;border:1px solid var(--b2);border-radius:var(--rs);background:var(--s2);color:var(--t2);font-family:var(--fn);font-size:10px;font-weight:700;cursor:pointer;text-align:center;transition:all .13s;line-height:1.3;}
+.tb.on{border-color:var(--acc);background:rgba(245,158,11,.1);color:var(--acc);}
 
-.gpx-btn {
-  background: var(--success-color);
-  color: #fff;
-  padding: 8px 15px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  white-space: nowrap;
-  transition: background-color 0.2s ease-in-out;
-}
+/* JSON */
+.ja{width:100%;min-height:130px;padding:10px;background:var(--bg);border:1px solid var(--b2);border-radius:var(--rs);color:var(--t2);font-family:var(--mo);font-size:11px;outline:none;resize:vertical;line-height:1.6;}
+.ja:focus{border-color:var(--acc);}
 
-.gpx-btn:hover {
-    background: var(--success-hover-color);
-}
-
-#map {
-  height: 500px;
-  width: 100%;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  border: 1px solid var(--border-color);
-  position: relative;
-  overflow: hidden;
-}
-
-.map-buttons {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
-  display: flex;
-  gap: 5px;
-}
-
-.map-buttons button {
-  background: var(--card-background-color);
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  padding: 8px 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-.map-buttons button:hover {
-    background: #f8f9fa;
-    color: var(--text-color);
-}
-
-
-/* --- CSS OTIMIZADO PARA TELEMÓVEIS --- */
-@media (max-width: 600px) {
-  body {
-    padding: 15px 10px;
-  }
-  h1 {
-    font-size: 1.8rem;
-    margin-bottom: 25px;
-  }
-  .search-container {
-    padding: 20px;
-    margin-bottom: 25px;
-  }
-  .search-bar {
-    flex-direction: column;
-  }
-
-  /* Card de informação da linha mais compacto */
-  .line-info-card {
-    padding: 15px;
-    font-size: 1rem;
-    margin-bottom: 25px;
-  }
-
-  /* Cards de destino mais compactos */
-  .pattern-box {
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-    padding: 15px;
-    font-size: 0.95rem;
-  }
-  
-  /* Botão de download ajustado */
-  .gpx-btn {
-      align-self: flex-end;
-      padding: 7px 12px;
-      font-size: 0.8rem;
-  }
-
-  /* Mapa em destaque, com altura fixa para ser o elemento principal */
-  #map {
-    height: 350px;
-  }
-}
+/* MISC */
+.al{padding:9px 11px;border-radius:var(--rs);font-size:11px;font-weight:600;margin-bottom:9px;line-height:1.5;}
+.al-i{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.22);color:#93c5fd;}
+.al-o{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.22);color:#6ee7b7;}
+.al-w{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.22);color:var(--acc);}
+.al-e{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.22);color:#fca5a5;}
+.empty{text-align:center;padding:26px 14px;color:var(--t3);}
+.ei{font-size:34px;margin-bottom:9px;}
+.et{font-size:13px;font-weight:600;color:var(--t2);margin-bottom:4px;}
+.es{font-size:11px;line-height:1.5;}
+.sep{height:1px;background:var(--b1);margin:11px 0;}
+.mono{font-family:var(--mo);font-weight:600;}
+.fer-c{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.18);border-radius:9px;font-size:9px;color:#c084fc;font-weight:700;margin:2px;}
+.nl-b{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:9px;font-size:9px;font-weight:700;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.22);color:#93c5fd;}
+.c-ok{color:var(--gr)!important;}.c-a{color:var(--acc)!important;}.c-w{color:var(--rd)!important;}.c-b{color:var(--bl)!important;}.c-p{color:var(--pu)!important;}.c-d{color:var(--t2)!important;}
+@media(max-width:360px){.salg{grid-template-columns:1fr;}.sg{gap:5px;}.sn{font-size:18px;}}
 </style>
 </head>
 <body>
+<div id="app">
 
-<div class="container">
-  <h1>Pesquisar Linha Carris Metropolitana</h1>
-
-  <div class="search-container">
-    <p>Insira o ID da linha da Carris Metropolitana:</p>
-    <div class="search-bar">
-      <input type="text" id="linha" placeholder="Ex: 1105, 1720, 3101">
-      <button onclick="buscarLinha()">Buscar</button>
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="logo">
+      <div class="logo-ic">🚌</div>
+      <div><div class="logo-t">Alvorada Drive</div><div class="logo-s">Escala & Salário</div></div>
     </div>
-  </div>
-
-  <div id="line-info-card" class="line-info-card"></div>
-
-  <div id="patterns"></div>
-  
-  <div id="map">
-    <div class="map-buttons">
-      <button onclick="mudarMapa('map')">Mapa</button>
-      <button onclick="mudarMapa('satellite')">Satélite</button>
-    </div>
+    <div class="hdr-d" id="hd"></div>
   </div>
 </div>
 
-<script src="https://unpkg.com/maplibre-gl@2.6.1/dist/maplibre-gl.js"></script>
-<link href="https://unpkg.com/maplibre-gl@2.6.1/dist/maplibre-gl.css" rel="stylesheet" />
+<div class="tabs">
+  <div class="tab on" onclick="goTab('cal')" id="tb-cal"><span class="ti">📅</span>Calendário</div>
+  <div class="tab" onclick="goTab('ch')" id="tb-ch"><span class="ti">📋</span>Chapas</div>
+  <div class="tab" onclick="goTab('res')" id="tb-res"><span class="ti">💶</span>Resumo</div>
+  <div class="tab" onclick="goTab('cfg')" id="tb-cfg"><span class="ti">⚙️</span>Config</div>
+</div>
+
+<div class="ct">
+
+<!-- CALENDÁRIO -->
+<div class="pn on" id="pn-cal">
+  <div class="card">
+    <div class="cal-h">
+      <button class="cal-n" onclick="chgM(-1)">‹</button>
+      <div class="cal-m" id="calT"></div>
+      <button class="cal-n" onclick="chgM(1)">›</button>
+    </div>
+    <div class="cg" id="cg"></div>
+    <div class="leg">
+      <div class="leg-item"><div class="leg-dot" style="background:var(--gr)"></div>Chapa</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--acc)"></div>Folga Trab.</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--t3)"></div>Folga/Descanso</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--pu)"></div>Feriado</div>
+      <span class="leg-item" style="color:var(--rd)">Dom</span>
+      <span class="leg-item" style="color:var(--bl)">Sáb</span>
+    </div>
+  </div>
+  <div id="dd"></div>
+</div>
+
+<!-- CHAPAS -->
+<div class="pn" id="pn-ch">
+  <div class="card">
+    <div class="ct-">Importar Chapa via JSON</div>
+    <div style="font-size:11px;color:var(--t2);margin-bottom:10px;line-height:1.7">Cola o JSON da chapa no formato da Alvorada. O campo <span class="mono">servico.chapa</span> define o número.</div>
+    <div class="ts" id="jts">
+      <button class="tb on" onclick="sjt('DUE')" id="jt-DUE">🏫 Úteis Esc.</button>
+      <button class="tb" onclick="sjt('DUF')" id="jt-DUF">📆 Úteis Fér.</button>
+      <button class="tb" onclick="sjt('SAB')" id="jt-SAB">🗓️ Sábados</button>
+      <button class="tb" onclick="sjt('DOM')" id="jt-DOM">☀️ Domingos</button>
+      <button class="tb" onclick="sjt('FER')" id="jt-FER">🎉 Feriados</button>
+    </div>
+    <textarea class="ja" id="ji" placeholder='Cole o JSON aqui:
+{
+  "servico": { "chapa": "4494", "tipo_dia": "Dia Útil Não Escolar" },
+  "periodos_trabalho": [ {"periodo":"1º Período","inicio":"13:35","fim":"17:27"} ],
+  "pausas": { "refeicao": {"local":"Marquês Pombal","inicio":"17:27","fim":"19:20"} },
+  "itinerario_detalhado": [ ... ]
+}'></textarea>
+    <div style="display:flex;gap:7px;margin-top:8px">
+      <button class="btn btn-p" style="flex:1" onclick="importJ()">✓ Importar Chapa</button>
+      <button class="btn btn-s" onclick="document.getElementById('ji').value=''">✕</button>
+    </div>
+    <div id="jr" style="margin-top:8px"></div>
+  </div>
+
+  <div class="card">
+    <div class="ct-">Chapas Guardadas</div>
+    <div class="sg">
+      <div class="sb"><div class="sn" id="st1">0</div><div class="sl-">Chapas</div></div>
+      <div class="sb"><div class="sn" id="st2">0</div><div class="sl-">Tipos</div></div>
+      <div class="sb"><div class="sn" id="st3">0</div><div class="sl-">Linhas</div></div>
+    </div>
+    <div class="ir" style="margin-bottom:10px">
+      <input class="inp" type="number" placeholder="Pesquisar nº" id="si">
+      <select class="inp" style="width:100px;flex:none" id="st"><option value="">Qualquer</option><option value="DUE">Úteis Esc.</option><option value="DUF">Úteis Fér.</option><option value="SAB">Sábados</option><option value="DOM">Domingos</option><option value="FER">Feriados</option></select>
+      <button class="btn btn-p" onclick="srch()">Ver</button>
+    </div>
+    <div id="sr"></div>
+    <div id="cl" style="margin-top:9px"></div>
+  </div>
+</div>
+
+<!-- RESUMO -->
+<div class="pn" id="pn-res">
+  <div class="hero">
+    <div class="hero-l">Estimativa Líquida do Mês</div>
+    <div class="hero-v" id="hv">—</div>
+    <div class="hero-s" id="hs">Atribui chapas no calendário para calcular</div>
+  </div>
+  <div class="salg">
+    <div class="salc"><div class="sal-l">Dias Trabalhados</div><div class="sal-v c-d" id="r1">0</div></div>
+    <div class="salc"><div class="sal-l">H. Extras Acum.</div><div class="sal-v c-a" id="r2">0h00</div></div>
+    <div class="salc"><div class="sal-l">Sub. Refeição</div><div class="sal-v c-ok" id="r3">0,00€</div></div>
+    <div class="salc"><div class="sal-l">Dom./Feriados</div><div class="sal-v c-p" id="r4">0</div></div>
+    <div class="salc fu"><div class="sal-l">Adicional Dom./Feriado</div><div class="sal-v c-ok" id="r5">0,00€</div></div>
+  </div>
+  <div class="card"><div class="ct-">Simulação Detalhada</div><div id="sd"><div class="empty"><div class="ei">💰</div><div class="et">Sem dados</div><div class="es">Atribui chapas no calendário</div></div></div></div>
+  <div class="card"><div class="ct-">Dias — <span id="rml" style="font-weight:400;color:var(--t3)"></span></div><div id="rd" style="font-size:12px;color:var(--t2)">Nenhum dia atribuído.</div></div>
+</div>
+
+<!-- CONFIG -->
+<div class="pn" id="pn-cfg">
+  <div class="card">
+    <div class="ct-">Base Salarial</div>
+    <div class="al al-o" style="margin-bottom:11px">✅ Valores dos recibos Fev/Mar 2026 — IRS 0% neste escalão</div>
+    <div class="cfr"><div><div class="cf-l">Vencimento Base</div><div class="cf-s">Salário base mensal bruto</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="cv" value="1178.49"><span class="cfu">€</span></div></div>
+    <div class="cfr"><div><div class="cf-l">Horas Mensais Base</div><div class="cf-s">Para cálculo do valor/hora</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="ch" value="173.33"><span class="cfu">h</span></div></div>
+    <div class="cfr"><div><div class="cf-l">Subsídio de Refeição</div><div class="cf-s">Por dia trabalhado (em cartão)</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="cr" value="7.20"><span class="cfu">€</span></div></div>
+    <div class="cfr"><div><div class="cf-l">Limite Horas Normais</div><div class="cf-s">Pausa+reserva incluídas nestas horas. Extra só acima disto.</div></div><div class="cf-r"><input class="cfi" type="number" step=".5" id="clim" value="8"><span class="cfu">h</span></div></div>
+  </div>
+  <div class="card">
+    <div class="ct-">Horas Extra Diurnas (06h–22h)</div>
+    <div class="cfr"><div><div class="cf-l">Extra D — 50%</div><div class="cf-s">1ª hora extra diurna do dia</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="ced50" value="7.45"><span class="cfu">€/h</span></div></div>
+    <div class="cfr"><div><div class="cf-l">Extra D — 75%</div><div class="cf-s">2ª+ horas extra diurnas</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="ced75" value="12.75"><span class="cfu">€/h</span></div></div>
+  </div>
+  <div class="card">
+    <div class="ct-">Horas Extra Noturnas 🌙 (22h–06h)</div>
+    <div class="al al-i" style="margin-bottom:10px">🌙 Horas entre as 22h00 e as 06h00 são noturnas — taxas diferentes</div>
+    <div class="cfr"><div><div class="cf-l">Extra N — 50%</div><div class="cf-s">1ª hora extra noturna</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="cen50" value="10.20"><span class="cfu">€/h</span></div></div>
+    <div class="cfr"><div><div class="cf-l">Extra N — 75%</div><div class="cf-s">2ª+ horas extra noturnas</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="cen75" value="11.90"><span class="cfu">€/h</span></div></div>
+    <div class="cfr"><div><div class="cf-l">Trabalho Noturno</div><div class="cf-s">Acréscimo por hora noturna (todas)</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="cn" value="1.70"><span class="cfu">€/h</span></div></div>
+  </div>
+  <div class="card">
+    <div class="ct-">Feriado / Domingo</div>
+    <div class="cfr"><div><div class="cf-l">Feriado D (diurno)</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="cfd" value="14.87"><span class="cfu">€/h</span></div></div>
+    <div class="cfr"><div><div class="cf-l">Feriado N (noturno)</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="cfn" value="18.41"><span class="cfu">€/h</span></div></div>
+    <div class="cfr"><div><div class="cf-l">Red. Tempo Descanso</div><div class="cf-s">Feriado Suplementar N</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="cfsp" value="4.91"><span class="cfu">€/h</span></div></div>
+    <div class="cfr"><div><div class="cf-l">Red. Descanso (Dom.)</div><div class="cf-s">Descanso complementar Domingo</div></div><div class="cf-r"><input class="cfi" type="number" step=".01" id="cdc" value="9.82"><span class="cfu">€/h</span></div></div>
+  </div>
+  <div class="card">
+    <div class="ct-">Descontos</div>
+    <div class="cfr"><div><div class="cf-l">Taxa IRS</div><div class="cf-s">0% em Mar/26 — atualiza se mudar</div></div><div class="cf-r"><input class="cfi" type="number" step=".1" id="cirs" value="0"><span class="cfu">%</span></div></div>
+    <div class="cfr"><div><div class="cf-l">Segurança Social</div><div class="cf-s">Taxa do trabalhador</div></div><div class="cf-r"><input class="cfi" type="number" step=".1" id="css" value="11"><span class="cfu">%</span></div></div>
+  </div>
+  <div class="card">
+    <div class="ct-">Feriados Nacionais</div>
+    <div id="fl" style="display:flex;flex-wrap:wrap;gap:3px"></div>
+  </div>
+  <div class="card">
+    <div class="ct-">Backup</div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <button class="btn btn-s" onclick="expD()">📤 Exportar</button>
+      <button class="btn btn-s" onclick="document.getElementById('impF').click()">📥 Importar</button>
+      <button class="btn btn-d" onclick="clrAll()">🗑️ Limpar Tudo</button>
+    </div>
+    <input type="file" id="impF" accept=".json" style="display:none" onchange="impD(this.files[0])">
+    <div style="margin-top:8px;font-size:9px;color:var(--t3)">Dados no browser (localStorage). Exporta regularmente para não perder.</div>
+  </div>
+  <button class="btn btn-p btn-fu" onclick="saveC()">💾 Guardar Configurações</button>
+</div>
+
+</div>
+</div>
 
 <script>
-let map = L.map('map').setView([38.7, -9.2], 12);
+// ═══════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════
+const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const DAYS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const TL={DUE:'Dias Úteis Escolares',DUF:'Dias Úteis Férias',SAB:'Sábados',DOM:'Domingos',FER:'Feriados'};
+const TC={DUE:'#3b82f6',DUF:'#06b6d4',SAB:'#3b82f6',DOM:'#ef4444',FER:'#a855f7'};
+const FPTS=['01-01','04-25','05-01','06-10','08-15','10-05','11-01','12-01','12-08','12-25'];
+const FPN={'01-01':'Ano Novo','04-25':'25 de Abril','05-01':'Dia do Trabalho','06-10':'Dia de Portugal','08-15':'Assunção','10-05':'República','11-01':'Todos os Santos','12-01':'Restauração','12-08':'Im. Conceição','12-25':'Natal'};
 
-const streets = L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=KsU9dgYjpIH2SXzcBfrX', { attribution: 'Map tiles by MapTiler, © OpenStreetMap contributors' }).addTo(map);
-const satellite = L.tileLayer('https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=KsU9dgYjpIH2SXzcBfrX', { attribution: 'Map tiles by MapTiler, © OpenStreetMap contributors' });
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let S={chapas:{},cal:{},cfg:{venc:1178.49,horas:173.33,ref:7.20,lim:8,ed50:7.45,ed75:12.75,en50:10.20,en75:11.90,noturno:1.70,ferD:14.87,ferN:18.41,ferSN:4.91,dc:9.82,irs:0,ss:11}};
+let cY=new Date().getFullYear(),cM=new Date().getMonth(),selD=null,jT='DUE';
 
-function mudarMapa(tipo) {
-  if(tipo === 'map'){ map.addLayer(streets); map.removeLayer(satellite); }
-  else { map.addLayer(satellite); map.removeLayer(streets); }
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  loadS();renderCal();updateChapas();renderFeriados();
+  const d=new Date();
+  const dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+  document.getElementById('hd').innerHTML=d.toLocaleDateString('pt-PT',{weekday:'short',day:'2-digit',month:'short'})+'<br>'+Math.round(d.getDate()/dim*100)+'% do mês';
+});
+
+// ═══════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════
+function goTab(t){
+  ['cal','ch','res','cfg'].forEach(id=>{
+    document.getElementById('pn-'+id).classList.toggle('on',id===t);
+    document.getElementById('tb-'+id).classList.toggle('on',id===t);
+  });
+  if(t==='res')buildRes();
+  if(t==='ch')updateChapas();
 }
 
-let polyline, decorator;
+// ═══════════════════════════════════════
+// CALENDAR
+// ═══════════════════════════════════════
+function mk(){return`${cY}-${String(cM+1).padStart(2,'0')}`;}
+function isFer(y,m,d){return FPTS.includes(String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'));}
+function getDT(y,m,d){if(isFer(y,m,d))return'FER';const dw=new Date(y,m,d).getDay();if(dw===0)return'DOM';if(dw===6)return'SAB';return'DUE';}
+function chgM(dir){cM+=dir;if(cM>11){cM=0;cY++;}if(cM<0){cM=11;cY--;}selD=null;renderCal();}
 
-async function buscarLinha() {
-  const numero = document.getElementById("linha").value.trim();
-  const patternsDiv = document.getElementById("patterns");
-  const lineInfoCard = document.getElementById('line-info-card');
-
-  lineInfoCard.style.display = 'none';
-  lineInfoCard.innerHTML = '';
-  patternsDiv.innerHTML = "<p>A carregar...</p>";
-
-  try {
-    const res = await fetch("https://api.carrismetropolitana.pt/v2/lines");
-    const data = await res.json();
-    const linhas = Array.isArray(data) ? data : data.data;
-    const linha = linhas.find(l => l.id === numero);
-
-    if (!linha) {
-      patternsDiv.innerHTML = `<p>Nenhuma linha encontrada com o ID ${numero}</p>`;
-      return;
-    }
-
-    if (linha.long_name) {
-        lineInfoCard.innerHTML = `<strong>Linha:</strong> ${linha.long_name}`;
-        lineInfoCard.style.display = 'block';
-    }
-
-    if (!linha.pattern_ids || linha.pattern_ids.length === 0) {
-      patternsDiv.innerHTML = "<p>Nenhum percurso encontrado para esta linha.</p>";
-      return;
-    }
-
-    patternsDiv.innerHTML = "";
-
-    for (const pid of linha.pattern_ids) {
-      const resPat = await fetch(`https://api.carrismetropolitana.pt/v2/patterns/${pid}`);
-      const dataPat = await resPat.json();
-      const p = Array.isArray(dataPat) ? dataPat[0] : dataPat;
-      
-      const div = document.createElement("div");
-      div.className = "pattern-box";
-
-      const destino = p.headsign || p.long_name || "Destino desconhecido";
-      div.innerHTML = `<span>Destino: ${destino}</span><button class="gpx-btn">⬇️ Baixar GPX</button>`;
-
-      div.onclick = () => mostrarShape(p);
-
-      const gpxButton = div.querySelector('.gpx-btn');
-      gpxButton.onclick = (event) => {
-        event.stopPropagation();
-        baixarGPX(p.shape_id, destino);
-      };
-
-      patternsDiv.appendChild(div);
-    }
-  } catch(err) {
-    patternsDiv.innerHTML = `<p>Erro ao carregar dados: ${err.message}</p>`;
+function renderCal(){
+  document.getElementById('calT').textContent=`${MONTHS[cM]} ${cY}`;
+  const key=mk(),cd=S.cal[key]||{},today=new Date();
+  const firstDow=new Date(cY,cM,1).getDay(),dim=new Date(cY,cM+1,0).getDate();
+  let h=DAYS.map(d=>`<div class="cdow">${d}</div>`).join('');
+  for(let i=0;i<firstDow;i++)h+='<div class="cd em"></div>';
+  for(let d=1;d<=dim;d++){
+    const ev=cd[d],dt=getDT(cY,cM,d);
+    const isT=today.getFullYear()===cY&&today.getMonth()===cM&&today.getDate()===d;
+    let cls='cd',evCls='',ic='';
+    if(dt==='DOM')cls+=' dom';else if(dt==='FER')cls+=' fer';else if(dt==='SAB')cls+=' sab';
+    if(isT)cls+=' td';if(selD===d)cls+=' sl';
+    if(ev){
+      cls+=' hv';
+      if(ev.type==='chapa'){evCls='ev-c';ic='🚌';}
+      else if(ev.type==='folga-trab'){evCls='ev-ft';ic='💰';}
+      else if(ev.type==='folga'){evCls='ev-f';ic='😴';}
+    }else if(isFer(cY,cM,d)){cls+=' hv ev-fe';ic='🎉';}
+    cls+=' '+evCls;
+    h+=`<div class="${cls}" onclick="pickD(${d})"><span class="dn">${d}</span>${ic?`<span class="dic">${ic}</span>`:''}</div>`;
   }
+  document.getElementById('cg').innerHTML=h;
+  if(selD)renderDD(selD);
 }
 
-async function mostrarShape(pattern) {
-  try {
-    const res = await fetch(`https://api.carrismetropolitana.pt/v2/shapes/${pattern.shape_id}`);
-    const data = await res.json();
-    const coords = data.geojson.geometry.coordinates.map(c => [c[1], c[0]]);
-    if (polyline) map.removeLayer(polyline);
-    if (decorator) map.removeLayer(decorator);
-    polyline = L.polyline(coords, { color: '#E30613', weight: 6, opacity: 0.9 }).addTo(map);
-    decorator = L.polylineDecorator(polyline, {
-      patterns: [{ offset: 15, repeat: 50, symbol: L.Symbol.arrowHead({ pixelSize: 8, polygon: false, pathOptions: { stroke: true, color: 'black', weight: 3, opacity: 0.9 }})}]
-    }).addTo(map);
-    map.fitBounds(polyline.getBounds());
-  } catch(err) { alert("Erro ao buscar o traçado: " + err.message); }
+function pickD(d){selD=d;renderCal();setTimeout(()=>document.getElementById('dd').scrollIntoView({behavior:'smooth',block:'nearest'}),50);}
+
+// ═══════════════════════════════════════
+// DAY DETAIL
+// ═══════════════════════════════════════
+function renderDD(day){
+  const key=mk(),cd=S.cal[key]||{},ev=cd[day];
+  const dt=getDT(cY,cM,day),tc=TC[dt];
+  const date=new Date(cY,cM,day);
+  const ds=date.toLocaleDateString('pt-PT',{weekday:'long',day:'numeric',month:'long'});
+  const fk=isFer(cY,cM,day)?String(cM+1).padStart(2,'0')+'-'+String(day).padStart(2,'0'):null;
+  const evType=ev?ev.type:null;
+
+  let h=`<div class="det">
+    <div class="det-h">
+      <div class="det-dt">${ds}</div>
+      <span class="badge" style="background:${tc}18;color:${tc};border:1px solid ${tc}30">${TL[dt]}</span>
+    </div>
+    ${fk?`<div class="al al-i" style="margin-bottom:11px">🎉 ${FPN[fk]||'Feriado Nacional'}</div>`:''}
+    <div style="margin-bottom:11px">
+      <div class="il" style="margin-bottom:7px">Tipo de Registo</div>
+      <div class="dtc">
+        <button class="dt-btn ${!evType||evType==='chapa'?'on-c':''}" onclick="setET(${day},'chapa')">🚌 Chapa de Serviço</button>
+        <button class="dt-btn ${evType==='folga-trab'?'on-ft':''}" onclick="setET(${day},'folga-trab')">💰 Folga Trabalhada</button>
+        <button class="dt-btn ${evType==='folga'?'on-f':''}" onclick="setET(${day},'folga')">😴 Folga / Descanso</button>
+        <button class="dt-btn ${!evType?'on-n':''}" onclick="setET(${day},null)">✕ Sem registo</button>
+      </div>
+    </div>`;
+
+  if(!evType){
+    h+=`<div class="empty" style="padding:14px 0"><div class="ei">⌨️</div><div class="et">Seleciona o tipo de registo</div></div>`;
+  }else if(evType==='folga'){
+    h+=`<div class="al al-o">😴 Folga / Descanso registado para este dia.</div>`;
+    h+=`<button class="btn btn-d" style="width:100%;margin-top:4px" onclick="remD(${day})">🗑️ Remover</button>`;
+  }else{
+    const isFT=evType==='folga-trab';
+    h+=`<div class="ig" style="margin-bottom:10px">
+      <div class="il">Número da Chapa</div>
+      <div class="ir">
+        <input class="inp" type="number" placeholder="Ex: 4494" id="dc" value="${ev.chapaId||''}">
+        <button class="btn btn-p" onclick="saveC2(${day})">✓</button>
+        <button class="btn btn-d" onclick="remD(${day})">✕</button>
+      </div>
+    </div>`;
+    if(isFT)h+=`<div class="al al-w" style="margin-bottom:10px">💰 <strong>Folga Trabalhada</strong> — Só as horas acima das ${S.cfg.lim}h normais geram valor. Pausas e reserva já incluídas nas ${S.cfg.lim}h.</div>`;
+    if(ev.chapaId){
+      const chapa=findC(ev.chapaId,dt);
+      if(chapa)h+=buildCV(chapa,dt,isFT);
+      else{
+        h+=`<div class="al al-w">⚠️ Chapa ${ev.chapaId} não encontrada. Importa o JSON no separador Chapas, ou insere as horas abaixo.</div>`;
+        h+=renderMH(day,ev);
+        if(ev.hIni&&ev.hFim){const mc=mChapa(ev);h+=buildFin(mc,dt,isFT);}
+      }
+    }
+  }
+  h+='</div>';
+  document.getElementById('dd').innerHTML=h;
 }
 
-async function baixarGPX(shapeId, nome) {
-  try {
-    const nomeSeguro = nome.replace(/[^a-z0-9\-_\.]/gi, '_');
-    const res = await fetch(`https://api.carrismetropolitana.pt/v2/shapes/${shapeId}`);
-    const data = await res.json();
-    const coords = data.geojson.geometry.coordinates.map(c => [c[1], c[0]]);
-    
-    let gpx = `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="CarrisGPX" xmlns="http://www.topografix.com/GPX/1/1">
-<trk><name>${nome}</name><trkseg>\n`;
-    
-    coords.forEach(c => gpx += `  <trkpt lat="${c[0]}" lon="${c[1]}"></trkpt>\n`);
-    gpx += `</trkseg></trk></gpx>`;
-    
-    const blob = new Blob([gpx], { type: 'application/gpx+xml' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `${nomeSeguro}.gpx`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
-  } catch(err) { alert("Erro ao gerar GPX: " + err.message); }
+function setET(day,type){
+  const key=mk();if(!S.cal[key])S.cal[key]={};
+  if(!type){delete S.cal[key][day];}
+  else{const ex=S.cal[key][day]||{};S.cal[key][day]={...ex,type};}
+  saveS();renderCal();
 }
+
+function saveC2(day){
+  const val=document.getElementById('dc')?.value.trim();if(!val)return;
+  const key=mk();if(!S.cal[key])S.cal[key]={};
+  S.cal[key][day]={...(S.cal[key][day]||{type:'chapa'}),chapaId:val};
+  saveS();renderCal();showT('✅ Chapa '+val+' guardada!');
+}
+
+function remD(day){
+  const key=mk();if(S.cal[key])delete S.cal[key][day];
+  saveS();selD=day;renderCal();
+}
+
+// ═══════════════════════════════════════
+// CHAPA VIEW
+// ═══════════════════════════════════════
+function buildCV(chapa,dt,isFT){
+  const tc=TC[chapa.tipo];
+  const dH=Math.floor((chapa.totalMin||0)/60),dM=(chapa.totalMin||0)%60;
+  let h=`<div style="padding-top:11px;border-top:1px solid var(--b1)">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;flex-wrap:wrap">
+      <span style="font-size:18px;font-weight:800;font-family:var(--mo);color:var(--acc)">Chapa ${chapa.id}</span>
+      <span class="badge" style="background:${tc}18;color:${tc};border:1px solid ${tc}30">${TL[chapa.tipo]}</span>
+      ${chapa.nightH>0?`<span class="nl-b">🌙 ${f2(chapa.nightH)}h noturnas</span>`:''}
+    </div>`;
+  if(chapa.hIni)h+=`<div style="display:flex;gap:12px;margin-bottom:9px;font-family:var(--mo);font-size:11px;flex-wrap:wrap"><span>🕐 <b>${chapa.hIni}</b></span><span>→</span><span>🕛 <b>${chapa.hFim||'--:--'}</b></span><span>⏱ <b>${dH}h${String(dM).padStart(2,'0')}m efetivo</b></span></div>`;
+  if(chapa.periodos&&chapa.periodos.length){
+    h+=`<div style="margin-bottom:9px;font-size:11px;color:var(--t2)">`;
+    chapa.periodos.forEach(p=>{h+=`<div style="display:flex;gap:6px;align-items:center;margin-bottom:3px"><span class="badge" style="background:rgba(59,130,246,.1);color:var(--bl);border:1px solid rgba(59,130,246,.2);font-size:9px">${p.periodo}</span><span class="mono">${p.inicio}</span> → <span class="mono">${p.fim}</span></div>`;});
+    if(chapa.pausa)h+=`<div style="margin-top:4px;color:var(--t3);font-size:9px">🍽️ Pausa: ${chapa.pausa.local} (${chapa.pausa.inicio} – ${chapa.pausa.fim})</div>`;
+    h+='</div>';
+  }
+  h+=renderTL(chapa);
+  h+=buildFin(chapa,dt,isFT);
+  h+='</div>';
+  return h;
+}
+
+function renderTL(chapa){
+  if(!chapa.itinerario||!chapa.itinerario.length)return'';
+  let h='<div class="ct-" style="margin-top:11px;margin-bottom:7px">Itinerário</div><div class="tl">';
+  chapa.itinerario.forEach((it,i)=>{
+    const isF=i===0,isL=i===chapa.itinerario.length-1;
+    const col=it.carreira?'var(--bl)':(isF||isL)?'var(--gr)':'var(--t3)';
+    const isN=isNight(it.hInicio);
+    h+=`<div class="tli">
+      <div class="tld" style="background:${col}"></div>
+      <div class="tlt">${it.hInicio}${it.hFim&&it.hFim!==it.hInicio?' → '+it.hFim:''} ${isN?'🌙':''}</div>
+      <div class="tlc">
+        <div class="tl-title">${it.carreira&&it.carreira!='0'?'🚌 Linha '+it.carreira+(it.variante&&it.variante!='0'?' (var.'+it.variante+')':''):(isF?'🏁 Início de Serviço':'🏁 Fim de Serviço')}</div>
+        <div class="tl-det">${it.origem&&it.destino&&it.destino!==it.origem?it.origem+' → '+it.destino:(it.origem||'')}</div>
+        ${it.placa?`<div class="tl-det">🚌 Placa: <span class="mono">${it.placa}</span></div>`:''}
+        ${it.obs?`<span class="tl-obs">${it.obs}</span>`:''}
+      </div>
+    </div>`;
+  });
+  return h+'</div>';
+}
+
+// ═══════════════════════════════════════
+// MANUAL HOURS
+// ═══════════════════════════════════════
+function renderMH(day,ev){
+  return`<div style="margin-top:9px;padding:12px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--rs)">
+    <div class="il" style="margin-bottom:8px">Inserir Horas Manualmente</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px">
+      <div class="ig"><div class="il">H. Início</div><input class="inp" type="time" id="mhi" value="${ev.hIni||''}"></div>
+      <div class="ig"><div class="il">H. Fim</div><input class="inp" type="time" id="mhf" value="${ev.hFim||''}"></div>
+    </div>
+    <button class="btn btn-s" style="width:100%" onclick="saveMH(${day})">⏱ Guardar Horas</button>
+  </div>`;
+}
+
+function saveMH(day){
+  const hi=document.getElementById('mhi')?.value,hf=document.getElementById('mhf')?.value;
+  if(!hi||!hf){showT('⚠️ Insere início e fim');return;}
+  const key=mk();if(!S.cal[key])S.cal[key]={};
+  let tot=tM(hf)-tM(hi);if(tot<0)tot+=1440;
+  S.cal[key][day]={...S.cal[key][day],hIni:hi,hFim:hf,totalMin:tot};
+  saveS();renderCal();showT('✅ Horas guardadas!');
+}
+
+function mChapa(ev){
+  const nh=calcNH(ev.hIni,ev.hFim,ev.totalMin||0);
+  return{id:ev.chapaId||'?',tipo:'DUE',itinerario:[],periodos:[],pausa:null,hIni:ev.hIni,hFim:ev.hFim,totalMin:ev.totalMin||0,nightH:nh};
+}
+
+// ═══════════════════════════════════════
+// FINANCIAL CALC
+// ═══════════════════════════════════════
+function isNight(tStr){const m=tM(tStr);return m>=22*60||m<6*60;}
+
+function calcNH(hIni,hFim,totMin){
+  if(!hIni||!hFim||!totMin)return 0;
+  const ini=tM(hIni);let n=0;
+  for(let i=0;i<totMin;i++){const c=(ini+i)%1440;if(c>=22*60||c<6*60)n++;}
+  return n/60;
+}
+
+function calcTotals(chapa,dt){
+  const cfg=S.cfg,totMin=chapa.totalMin||0,totH=totMin/60;
+  const lim=cfg.lim||8;
+  const extraH=Math.max(0,totH-lim);
+  const normalH=Math.min(totH,lim);
+  const nightH=chapa.nightH||calcNH(chapa.hIni,chapa.hFim,totMin);
+
+  // Split extra into night and day
+  const nightExH=Math.min(extraH,Math.max(0,nightH-Math.max(0,normalH-Math.min(normalH,nightH))));
+  const nightExH2=Math.min(extraH,nightH);
+  const dayExH=extraH-nightExH2;
+
+  // Extra day value
+  let edv=0;
+  if(dayExH>0){edv=Math.min(dayExH,1)*cfg.ed50+Math.max(0,dayExH-1)*cfg.ed75;}
+  // Extra night value
+  let env=0;
+  if(nightExH2>0){env=Math.min(nightExH2,1)*cfg.en50+Math.max(0,nightExH2-1)*cfg.en75;}
+  // Night supplement (all night hours)
+  const nv=nightH*cfg.noturno;
+  // Special
+  let esp=0;
+  if(dt==='FER'){const fnh=Math.min(normalH,nightH);const fdh=normalH-fnh;esp=fdh*cfg.ferD+fnh*cfg.ferN;}
+  else if(dt==='DOM')esp=normalH*cfg.dc;
+
+  return{totH,normalH,extraH,dayExH,nightExH2,edv,env,nv,esp,nightH,ref:cfg.ref};
+}
+
+function buildFin(chapa,dt,isFT){
+  const t=calcTotals(chapa,dt);
+  const f=v=>f2(v)+'€';
+  const fh=h=>{const hh=Math.floor(h),mm=Math.round((h-hh)*60);return`${hh}h${String(mm).padStart(2,'0')}m`;};
+  let h=`<div style="margin-top:11px;padding-top:11px;border-top:1px solid var(--b1)">
+    <div class="ct-" style="margin-bottom:9px">💶 Estimativa do Dia</div>`;
+  if(!chapa.totalMin){h+=`<div class="al al-w">Insere as horas para calcular.</div>`;h+='</div>';return h;}
+  h+=`<div class="br"><span class="br-l">Duração total do serviço</span><span class="br-v c-d">${fh(t.totH)}</span></div>`;
+  h+=`<div class="br"><span class="br-l">Horas normais (incl. pausa/reserva)</span><span class="br-v c-d">${fh(t.normalH)} / ${S.cfg.lim}h</span></div>`;
+  if(t.extraH>0){
+    h+=`<div class="br"><span class="br-l" style="font-weight:700;color:var(--tx)">⚡ Horas Extra</span><span class="br-v c-a">${fh(t.extraH)}</span></div>`;
+    if(t.dayExH>0)h+=`<div class="br"><span class="br-l" style="padding-left:12px">↳ Extra diurna (${fh(t.dayExH)})</span><span class="br-v c-a">${f(t.edv)}</span></div>`;
+    if(t.nightExH2>0)h+=`<div class="br"><span class="br-l" style="padding-left:12px">↳ Extra noturna 🌙 (${fh(t.nightExH2)})</span><span class="br-v c-b">${f(t.env)}</span></div>`;
+  }else h+=`<div class="br"><span class="br-l">Horas extra</span><span class="br-v" style="color:var(--t3)">Nenhuma</span></div>`;
+  if(t.nightH>0)h+=`<div class="br"><span class="br-l">Trabalho noturno 🌙 (${fh(t.nightH)})</span><span class="br-v c-b">${f(t.nv)}</span></div>`;
+  if(t.esp>0)h+=`<div class="br"><span class="br-l">${dt==='DOM'?'Descanso Complementar':'Feriado '+(t.nightH>0?'D+N':'D')}</span><span class="br-v c-p">${f(t.esp)}</span></div>`;
+  h+=`<div class="br"><span class="br-l">Subsídio de refeição</span><span class="br-v c-ok">${f(t.ref)}</span></div>`;
+  const totExtra=t.edv+t.env+t.nv+t.esp;
+  if(isFT){
+    h+=`<div class="br" style="border-top:1px solid var(--gr);margin-top:4px;padding-top:9px"><span class="br-l" style="font-weight:700;color:var(--tx)">Adicional Folga Trabalhada</span><span class="br-v" style="font-size:14px;color:var(--gr)">${f(totExtra)}</span></div>`;
+    h+=`<div style="font-size:9px;color:var(--t3);margin-top:5px">+ Sub. refeição ${f(t.ref)} (se aplicável). Vencimento base paga as ${S.cfg.lim}h normais.</div>`;
+  }else{
+    h+=`<div class="br" style="border-top:1px solid var(--acc);margin-top:4px;padding-top:9px"><span class="br-l" style="font-weight:700;color:var(--tx)">Total Extra do Dia</span><span class="br-v" style="font-size:14px;color:var(--acc)">${f(totExtra+t.ref)}</span></div>`;
+    h+=`<div style="font-size:9px;color:var(--t3);margin-top:5px">Vencimento base (${f(S.cfg.venc)}) pago mensalmente. Sub. refeição isento de IRS até limite legal.</div>`;
+  }
+  h+='</div>';return h;
+}
+
+// ═══════════════════════════════════════
+// JSON IMPORT
+// ═══════════════════════════════════════
+function sjt(t){jT=t;['DUE','DUF','SAB','DOM','FER'].forEach(id=>document.getElementById('jt-'+id).classList.toggle('on',id===t));}
+
+function importJ(){
+  const raw=document.getElementById('ji').value.trim();
+  if(!raw){showR('al-w','⚠️ Cola o JSON antes de importar.');return;}
+  let json;
+  try{json=JSON.parse(raw);}catch(e){showR('al-e','❌ JSON inválido: '+e.message);return;}
+  try{
+    const c=parseJ(json,jT);
+    S.chapas[c.id+'_'+jT]=c;
+    saveS();updateChapas();
+    showR('al-o',`✅ Chapa ${c.id} importada! ${TL[jT]} — ${c.itinerario.length} entradas, ${Math.floor(c.totalMin/60)}h${String(c.totalMin%60).padStart(2,'0')}m efetivo${c.nightH>0?' 🌙 '+f2(c.nightH)+'h noturnas':''}`);
+    document.getElementById('ji').value='';
+  }catch(e){showR('al-e','❌ Erro: '+e.message);console.error(e);}
+}
+
+function showR(cls,msg){document.getElementById('jr').innerHTML=`<div class="al ${cls}" style="margin-bottom:0">${msg}</div>`;}
+
+function parseJ(json,tipo){
+  const svc=json.servico||{};
+  const id=String(svc.chapa||json.chapa||'?');
+  const itRaw=json.itinerario_detalhado||json.itinerario||[];
+  const periodos=json.periodos_trabalho||[];
+  const pausaRaw=json.pausas?.refeicao||null;
+
+  const itin=itRaw.map(it=>({
+    carreira:it.carreira?String(it.carreira):null,
+    variante:it.variante?String(it.variante):null,
+    hInicio:String(it.h_inicio||it.hInicio||''),
+    hFim:String(it.h_fim||it.hFim||''),
+    origem:it.origem||'',destino:it.destino||'',
+    placa:it.placa?String(it.placa):null,
+    obs:it.observacoes||it.obs||null
+  }));
+
+  // Determine start/end
+  const valid=itin.filter(i=>i.hInicio);
+  const hIni=valid.length?valid[0].hInicio:(periodos[0]?.inicio||null);
+  const last=itin[itin.length-1];
+  const hFim=last?(last.hFim||last.hInicio):(periodos[periodos.length-1]?.fim||null);
+
+  // Total effective work time
+  let totalMin=0;
+  if(periodos.length>0){
+    periodos.forEach(p=>{let d=tM(p.fim)-tM(p.inicio);if(d<0)d+=1440;totalMin+=d;});
+  }else if(hIni&&hFim){
+    let d=tM(hFim)-tM(hIni);if(d<0)d+=1440;totalMin=d;
+    if(pausaRaw){let pd=tM(pausaRaw.fim)-tM(pausaRaw.inicio);if(pd<0)pd+=1440;totalMin-=pd;}
+  }
+
+  const nightH=calcNH(hIni,hFim,totalMin);
+  return{id,tipo,itinerario:itin,periodos,pausa:pausaRaw,hIni,hFim,totalMin,nightH,zona:svc.zona_operacional||''};
+}
+
+// ═══════════════════════════════════════
+// CHAPAS LIST
+// ═══════════════════════════════════════
+function updateChapas(){
+  const all=Object.values(S.chapas).filter(c=>c&&c.id);
+  const tipos=new Set(all.map(c=>c.tipo));
+  const linhas=new Set(all.flatMap(c=>(c.itinerario||[]).map(i=>i.carreira).filter(Boolean)));
+  document.getElementById('st1').textContent=all.length;
+  document.getElementById('st2').textContent=tipos.size;
+  document.getElementById('st3').textContent=linhas.size;
+  const wrap=document.getElementById('cl');
+  if(!all.length){wrap.innerHTML='<div class="empty"><div class="ei">📋</div><div class="et">Sem chapas</div><div class="es">Importa chapas via JSON acima</div></div>';return;}
+  const byT={};all.forEach(c=>{if(!byT[c.tipo])byT[c.tipo]=[];byT[c.tipo].push(c);});
+  wrap.innerHTML=Object.entries(byT).map(([t,cs])=>`
+    <div style="margin-bottom:11px">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:var(--t2);margin-bottom:5px;padding:2px 0;border-bottom:1px solid var(--b1);text-transform:uppercase">${TL[t]} (${cs.length})</div>
+      ${cs.sort((a,b)=>+a.id-(+b.id)).map(c=>`
+        <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 8px;background:var(--s2);border:1px solid var(--b2);border-radius:13px;font-size:11px;font-weight:600;font-family:var(--mo);color:var(--t2);cursor:pointer;margin:2px;transition:all .12s"
+          onclick="showC('${c.id}','${c.tipo}')"
+          onmouseover="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'"
+          onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--t2)'">
+          <span style="width:5px;height:5px;border-radius:50%;background:${TC[c.tipo]};flex-shrink:0;display:inline-block"></span>
+          ${c.id}${c.hIni?` <span style="color:var(--t3);font-size:9px">${c.hIni}</span>`:''}
+        </span>`).join('')}
+    </div>`).join('');
+}
+
+function srch(){const id=document.getElementById('si').value.trim(),t=document.getElementById('st').value;if(id)showC(id,t||null);}
+function showC(id,tipo){
+  const c=findC(id,tipo);
+  const w=document.getElementById('sr');
+  if(!c){w.innerHTML=`<div class="al al-w">Chapa ${id} não encontrada.</div>`;return;}
+  w.innerHTML=`<div style="margin-top:9px">${buildCV(c,c.tipo,false)}</div>`;
+}
+function findC(id,tipo){
+  if(!id)return null;
+  const ts=tipo?[tipo,'DUE','DUF','SAB','DOM','FER']:['DUE','DUF','SAB','DOM','FER'];
+  for(const t of ts){const c=S.chapas[String(id)+'_'+t];if(c)return c;}
+  return null;
+}
+
+// ═══════════════════════════════════════
+// RESUMO
+// ═══════════════════════════════════════
+function buildRes(){
+  const key=mk(),cd=S.cal[key]||{},cfg=S.cfg;
+  document.getElementById('rml').textContent=`${MONTHS[cM]} ${cY}`;
+  let dias=0,extraH=0,refT=0,dfCnt=0,espT=0,edvT=0,envT=0,nvT=0;
+  const arr=[];
+
+  Object.entries(cd).forEach(([d,ev])=>{
+    const day=+d,dt=getDT(cY,cM,day);
+    if(!ev)return;
+    if(ev.type==='folga'){arr.push({day,type:'folga'});return;}
+    let chapa=findC(ev.chapaId,dt);
+    if(ev.hIni&&ev.hFim){
+      const nh=calcNH(ev.hIni,ev.hFim,ev.totalMin||0);
+      if(!chapa)chapa=mChapa(ev);
+      else chapa={...chapa,hIni:ev.hIni,hFim:ev.hFim,totalMin:ev.totalMin||chapa.totalMin||0,nightH:nh};
+    }
+    if(!chapa||!chapa.totalMin){arr.push({day,chapaId:ev.chapaId,type:ev.type,found:false});return;}
+    const isFT=ev.type==='folga-trab';
+    const t=calcTotals(chapa,dt);
+    dias++;extraH+=t.extraH;refT+=t.ref;edvT+=t.edv;envT+=t.env;nvT+=t.nv;espT+=t.esp;
+    if(dt==='DOM'||dt==='FER')dfCnt++;
+    arr.push({day,chapaId:ev.chapaId,type:ev.type,dt,t,found:true});
+  });
+
+  const eHH=Math.floor(extraH),eMM=Math.round((extraH-eHH)*60);
+  document.getElementById('r1').textContent=dias;
+  document.getElementById('r2').textContent=`${eHH}h${String(eMM).padStart(2,'0')}`;
+  document.getElementById('r3').textContent=f2(refT)+'€';
+  document.getElementById('r4').textContent=dfCnt;
+  document.getElementById('r5').textContent=f2(espT)+'€';
+  const f=v=>f2(v)+'€';
+
+  if(dias>0){
+    const totE=edvT+envT+nvT+espT;
+    const bruto=cfg.venc+totE+refT;
+    const dSS=cfg.venc*cfg.ss/100;
+    const bIRS=cfg.venc+totE;
+    const dIRS=bIRS*cfg.irs/100;
+    const liq=bruto-dSS-dIRS;
+    document.getElementById('hv').textContent=f(liq);
+    document.getElementById('hs').textContent=`Estimativa líquida — ${dias} dias em ${MONTHS[cM]}`;
+    document.getElementById('sd').innerHTML=`
+      <div class="br"><span class="br-l">Vencimento Base</span><span class="br-v">${f(cfg.venc)}</span></div>
+      <div class="br"><span class="br-l">Extra Diurna</span><span class="br-v c-a">${f(edvT)}</span></div>
+      <div class="br"><span class="br-l">Extra Noturna 🌙</span><span class="br-v c-b">${f(envT)}</span></div>
+      <div class="br"><span class="br-l">Trabalho Noturno 🌙</span><span class="br-v c-b">${f(nvT)}</span></div>
+      <div class="br"><span class="br-l">Adicional Dom./Feriado</span><span class="br-v c-p">${f(espT)}</span></div>
+      <div class="br"><span class="br-l">Sub. Refeição (${dias}d × ${cfg.ref}€)</span><span class="br-v c-ok">${f(refT)}</span></div>
+      <div class="br" style="border-top:2px solid var(--b2);margin-top:3px"><span class="br-l" style="font-weight:700;color:var(--tx)">Bruto Total</span><span class="br-v">${f(bruto)}</span></div>
+      <div class="br"><span class="br-l">− Seg. Social (${cfg.ss}%)</span><span class="br-v c-w">−${f(dSS)}</span></div>
+      <div class="br"><span class="br-l">− IRS (${cfg.irs}%)</span><span class="br-v c-w">−${f(dIRS)}</span></div>
+      <div class="br" style="border-top:2px solid var(--gr);padding-top:11px;margin-top:3px">
+        <span class="br-l" style="font-weight:800;font-size:12px;color:var(--tx)">≈ LÍQUIDO ESTIMADO</span>
+        <span class="br-v" style="font-size:17px;color:var(--gr)">${f(liq)}</span>
+      </div>
+      <div style="font-size:9px;color:var(--t3);margin-top:9px;padding:8px;background:var(--s2);border-radius:6px;line-height:1.7">⚠️ Estimativa com ${dias} dias. IRS ${cfg.irs}% (0% em Mar/26). Sub. refeição excluído da base IRS. Verifica sempre o recibo oficial.</div>`;
+  }else{
+    document.getElementById('hv').textContent='—';
+    document.getElementById('hs').textContent='Atribui chapas no calendário';
+    document.getElementById('sd').innerHTML='<div class="empty"><div class="ei">💰</div><div class="et">Sem dados</div><div class="es">Atribui chapas no calendário</div></div>';
+  }
+
+  document.getElementById('rd').innerHTML=arr.length?arr.sort((a,b)=>a.day-b.day).map(d=>{
+    const date=new Date(cY,cM,d.day);
+    const ds=date.toLocaleDateString('pt-PT',{weekday:'short',day:'numeric'});
+    if(d.type==='folga')return`<div class="br"><span class="br-l" style="display:flex;align-items:center;gap:5px"><span style="width:4px;height:4px;border-radius:50%;background:var(--t3);flex-shrink:0;display:inline-block"></span><span style="text-transform:capitalize">${ds}</span></span><span style="font-size:9px;color:var(--t3)">😴 Folga</span></div>`;
+    if(!d.found)return`<div class="br"><span class="br-l" style="text-transform:capitalize">${ds} — <span class="mono">Ch.${d.chapaId||'?'}</span></span><span style="font-size:9px;color:var(--rd)">sem horas</span></div>`;
+    const tc=TC[d.dt],isFT=d.type==='folga-trab';
+    const tot=d.t.edv+d.t.env+d.t.nv+d.t.esp+d.t.ref;
+    return`<div class="br">
+      <span class="br-l" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+        <span style="width:4px;height:4px;border-radius:50%;background:${tc};flex-shrink:0;display:inline-block"></span>
+        <span style="text-transform:capitalize">${ds}</span>
+        ${isFT?'<span style="font-size:8px;color:var(--acc)">💰FT</span>':''}
+        <span class="mono" style="font-size:10px">Ch.${d.chapaId}</span>
+        <span style="font-size:9px;color:var(--t3)">${f2(d.t.totH)}h</span>
+        ${d.t.extraH>0?`<span style="font-size:9px;color:var(--acc)">+${f2(d.t.extraH)}hE</span>`:''}
+        ${d.t.nightH>0?`<span style="font-size:9px;color:var(--bl)">🌙${f2(d.t.nightH)}h</span>`:''}
+      </span>
+      <span class="br-v c-a">${f2(tot)}€</span>
+    </div>`;
+  }).join(''):'Nenhum dia atribuído.';
+}
+
+// ═══════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════
+function saveC(){
+  const g=id=>parseFloat(document.getElementById(id).value)||0;
+  S.cfg={venc:g('cv')||1178.49,horas:g('ch')||173.33,ref:g('cr')||7.20,lim:g('clim')||8,
+    ed50:g('ced50')||7.45,ed75:g('ced75')||12.75,en50:g('cen50')||10.20,en75:g('cen75')||11.90,
+    noturno:g('cn')||1.70,ferD:g('cfd')||14.87,ferN:g('cfn')||18.41,ferSN:g('cfsp')||4.91,
+    dc:g('cdc')||9.82,irs:g('cirs'),ss:g('css')||11};
+  saveS();showT('✅ Configurações guardadas!');
+}
+
+function renderFeriados(){
+  document.getElementById('fl').innerHTML=FPTS.map(f=>`<div class="fer-c">🎉 ${FPN[f]||f} <span style="opacity:.5">${f}</span></div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════
+function saveS(){try{localStorage.setItem('alvoV3',JSON.stringify({chapas:S.chapas,cal:S.cal,cfg:S.cfg}));}catch(e){showT('⚠️ Armazenamento cheio.');}}
+function loadS(){
+  try{
+    const raw=localStorage.getItem('alvoV3');if(!raw)return;
+    const d=JSON.parse(raw);
+    if(d.chapas)S.chapas=d.chapas;if(d.cal)S.cal=d.cal;if(d.cfg)S.cfg={...S.cfg,...d.cfg};
+    const map={venc:'cv',horas:'ch',ref:'cr',lim:'clim',ed50:'ced50',ed75:'ced75',en50:'cen50',en75:'cen75',noturno:'cn',ferD:'cfd',ferN:'cfn',ferSN:'cfsp',dc:'cdc',irs:'cirs',ss:'css'};
+    Object.entries(map).forEach(([k,id])=>{const el=document.getElementById(id);if(el)el.value=S.cfg[k];});
+  }catch(e){console.warn(e);}
+}
+
+function expD(){
+  const b=new Blob([JSON.stringify({chapas:S.chapas,cal:S.cal,cfg:S.cfg},null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`alvorada_${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);
+  showT('📤 Backup exportado!');
+}
+
+function impD(file){
+  if(!file)return;const r=new FileReader();
+  r.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.chapas)S.chapas=d.chapas;if(d.cal)S.cal=d.cal;if(d.cfg)S.cfg={...S.cfg,...d.cfg};saveS();loadS();updateChapas();renderCal();showT('✅ Dados importados!');}catch{showT('❌ Ficheiro inválido.');}};
+  r.readAsText(file);
+}
+
+function clrAll(){if(!confirm('⚠️ Apagar TODOS os dados?'))return;S.chapas={};S.cal={};localStorage.removeItem('alvoV3');updateChapas();renderCal();showT('🗑️ Dados apagados.');}
+
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+function tM(s){if(!s)return 0;const m=String(s).match(/(\d{1,2})[:\.](\d{2})/);if(!m)return 0;return+m[1]*60+(+m[2]);}
+function f2(v){return(v||0).toFixed(2).replace('.',',');}
+function showT(msg){document.querySelectorAll('.toast').forEach(t=>t.remove());const t=document.createElement('div');t.className='toast';t.style.cssText='position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--b2);color:var(--tx);padding:8px 17px;border-radius:20px;font-size:12px;font-weight:700;z-index:9999;box-shadow:0 6px 18px rgba(0,0,0,.55);white-space:nowrap;max-width:92vw;text-align:center';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
 </script>
-
 </body>
 </html>
